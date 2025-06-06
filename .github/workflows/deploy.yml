@@ -24,4 +24,4 @@ jobs:
             cd /cicd  #
             git pull origin main
             npm install
-            pm2 restart index || pm2 start index.js --name trycicd
+            pm2 restart trycicd || pm2 start dist/index.js --name trycicd
