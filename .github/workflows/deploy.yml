@@ -1,0 +1,29 @@
+name: Auto Deploy to GCP VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH Key
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-passphrase: ${{ secrets.SSH_PASSPHRASE }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no priyanshupatel@35.193.99.102 << 'EOF'
+            cd autotweets/backend
+            git pull origin main
+            npm install
+            pm2 restart index || pm2 start index.js --name index
+          EOF
